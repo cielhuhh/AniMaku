@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AniMaku - Nonton Anime Gratis</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">AniMaku</div>
+    <ul class="nav-links">
+      <li class="dropdown">
+        <a href="#">Genre ▾</a>
+        <ul class="dropdown-menu" id="genre-dropdown">
+          <!-- Genre list di-generate lewat JS -->
+        </ul>
+      </li>
+      <li><a href="favorit.html">❤️ Favorit</a></li>
+    </ul>
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="slider"></span>
+    </label>
+  </nav>
+
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Cari anime..." />
+    <button id="search-btn">Search</button>
+  </div>
+
+  <main>
+    <h2 id="section-title">Trending Anime</h2>
+    <div id="anime-list" class="anime-grid"></div>
+    <div id="search-results" class="anime-grid" style="display: none;"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 AniMaku. All rights reserved.</p>
+    <p>dibuat oleh ❤️ by [Bryan Alberta]</p>
+  </footer>
+  <script src="JS/script.js"></script>
+</body>
+</html>

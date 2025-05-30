@@ -1,0 +1,84 @@
+<!-- favorit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favorit - AniMaku</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">AniMaku</div>
+    <ul class="nav-links">
+      <li><a href="index.html">🏠 Home</a></li>
+      <li class="dropdown">
+        <a href="#">Genre ▾</a>
+        <ul class="dropdown-menu" id="genre-dropdown"></ul>
+      </li>
+      <li><a href="favorit.html">❤️ Favorit</a></li>
+    </ul>
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider"></span>
+    </label>
+  </nav>
+
+  <main>
+    <h2 id="section-title">Anime Favorit Kamu ❤️</h2>
+    <div id="favorites-container" class="anime-grid"></div>
+    <p id="empty-msg" style="text-align:center; padding: 2rem; display:none;">Belum ada anime favorit. Tambahkan dulu dari halaman utama~</p>
+  </main>
+
+  <script>
+    // THEME
+    const themeToggle = document.getElementById("theme-toggle");
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light-mode");
+      themeToggle.checked = true;
+    }
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("light-mode");
+      localStorage.setItem("theme", themeToggle.checked ? "light" : "dark");
+    });
+
+    // FAVORITE ANIME
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const container = document.getElementById("favorites-container");
+    const msg = document.getElementById("empty-msg");
+
+    if (favorites.length === 0) {
+      msg.style.display = "block";
+    } else {
+      favorites.forEach(anime => {
+        const card = document.createElement("div");
+        card.className = "anime-card";
+        card.innerHTML = `
+          <img src="${anime.image}" alt="${anime.title}">
+          <h3>${anime.title}</h3>
+          <a href="watch.html?id=${anime.id}">Tonton</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // GENRE DROPDOWN
+    fetch("https://api.jikan.moe/v4/genres/anime")
+      .then(res => res.json())
+      .then(data => {
+        const menu = document.getElementById("genre-dropdown");
+        menu.innerHTML = "";
+        data.data.forEach(genre => {
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `genre.html?id=${genre.mal_id}&name=${genre.name}`;
+          link.textContent = genre.name;
+          li.appendChild(link);
+          menu.appendChild(li);
+        });
+      })
+      .catch(err => console.error("Gagal memuat genre:", err));
+  </script>
+</body>
+</html>

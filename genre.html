@@ -1,0 +1,96 @@
+<!-- genre.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genre - AniMaku</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">AniMaku</div>
+    <ul class="nav-links">
+      <li><a href="index.html">🏠 Home</a></li>
+      <li class="dropdown">
+        <a href="#">Genre ▾</a>
+        <ul class="dropdown-menu" id="genre-dropdown"></ul>
+      </li>
+      <li><a href="favorit.html">❤️ Favorit</a></li>
+    </ul>
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider"></span>
+    </label>
+  </nav>
+
+  <main>
+    <h2 id="section-title">Genre</h2>
+    <div id="anime-list" class="anime-grid"></div>
+    <p id="empty-msg" style="text-align:center; padding: 2rem; display:none;">Anime tidak ditemukan dalam genre ini.</p>
+  </main>
+
+  <script>
+    // THEME TOGGLE
+    let themeToggle = document.getElementById("theme-toggle");
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light-mode");
+      themeToggle.checked = true;
+    }
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("light-mode");
+      localStorage.setItem("theme", themeToggle.checked ? "light" : "dark");
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const genreId = params.get("id");
+    const genreName = params.get("name");
+    const sectionTitle = document.getElementById("section-title");
+    sectionTitle.textContent = `Genre: ${genreName}`;
+
+    fetch(`https://api.jikan.moe/v4/anime?genres=${genreId}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("anime-list");
+        const msg = document.getElementById("empty-msg");
+
+        if (!data.data || data.data.length === 0) {
+          msg.style.display = "block";
+          return;
+        }
+
+        data.data.forEach(anime => {
+          const card = document.createElement("div");
+          card.className = "anime-card";
+          card.innerHTML = `
+            <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
+            <h3>${anime.title}</h3>
+            <a href="watch.html?id=${anime.mal_id}">Tonton</a>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error("Gagal memuat anime genre:", err);
+        document.getElementById("empty-msg").textContent = "Gagal memuat data genre.";
+        document.getElementById("empty-msg").style.display = "block";
+      });
+
+    fetch("https://api.jikan.moe/v4/genres/anime")
+      .then(res => res.json())
+      .then(data => {
+        const menu = document.getElementById("genre-dropdown");
+        menu.innerHTML = "";
+        data.data.forEach(genre => {
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `genre.html?id=${genre.mal_id}&name=${genre.name}`;
+          link.textContent = genre.name;
+          li.appendChild(link);
+          menu.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>

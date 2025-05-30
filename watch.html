@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tonton Anime - AniMaku</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    .watch-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .anime-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .anime-meta img {
+      width: 250px;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .anime-info {
+      flex: 1;
+    }
+
+    .anime-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #e63946;
+    }
+
+    .anime-info .fav-btn {
+      font-size: 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+
+    .fav-btn.favorited {
+      color: #ff4d4d;
+    }
+
+    .anime-info .genres {
+      margin: 0.5rem 0;
+    }
+
+    .genre-badge {
+      display: inline-block;
+      background: #f1f1f1;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      margin: 0 0.3rem 0.3rem 0;
+      font-size: 0.85rem;
+      color: #333;
+    }
+
+    body.light-mode .genre-badge {
+      background: #eee;
+    }
+
+    .anime-desc {
+      margin: 1rem 0;
+    }
+
+    .translate-btn {
+      margin-bottom: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .video-frame {
+      aspect-ratio: 16/9;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      background: #e63946;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">AniMaku</div>
+    <ul class="nav-links">
+      <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="favorit.html">❤️ Favorit</a></li>
+    </ul>
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="slider"></span>
+    </label>
+  </nav>
+
+  <main class="watch-container">
+    <div class="anime-meta">
+      <img id="anime-img" src="" alt="Poster">
+      <div class="anime-info">
+        <h1 id="anime-title">Judul Anime <button id="fav-btn" class="fav-btn">❤️</button></h1>
+        <div class="genres" id="anime-genres"></div>
+        <p><strong>Rating:</strong> <span id="anime-score">-</span></p>
+        <p class="anime-desc" id="anime-desc">Deskripsi akan muncul di sini.</p>
+        <button class="translate-btn" id="translate-btn">🌐 Terjemahkan ke Bahasa Indonesia</button>
+      </div>
+    </div>
+
+    <div class="video-frame">
+      <iframe id="anime-player" src="https://samehadaku.cloud/" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <a class="back-button" href="index.html">⬅️ Kembali ke Beranda</a>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const animeId = params.get("id");
+
+    const favBtn = document.getElementById("fav-btn");
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    function isFavorite(id) {
+      return favorites.some(f => f.id === id);
+    }
+
+    function toggleFavorite(anime) {
+      const index = favorites.findIndex(f => f.id === anime.mal_id);
+      if (index !== -1) {
+        favorites.splice(index, 1);
+        favBtn.classList.remove("favorited");
+      } else {
+        favorites.push({
+          id: anime.mal_id,
+          title: anime.title,
+          image: anime.images.jpg.image_url
+        });
+        favBtn.classList.add("favorited");
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+
+    async function loadAnimeDetail() {
+      try {
+        const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}`);
+        const data = await res.json();
+        const anime = data.data;
+
+        document.getElementById("anime-title").childNodes[0].textContent = anime.title + " ";
+        document.getElementById("anime-img").src = anime.images.jpg.image_url;
+        document.getElementById("anime-desc").textContent = anime.synopsis || "-";
+        document.getElementById("anime-score").textContent = anime.score || "-";
+
+        const genres = document.getElementById("anime-genres");
+        genres.innerHTML = "";
+        anime.genres.forEach(g => {
+          const span = document.createElement("span");
+          span.className = "genre-badge";
+          span.textContent = g.name;
+          genres.appendChild(span);
+        });
+
+        if (isFavorite(anime.mal_id)) {
+          favBtn.classList.add("favorited");
+        }
+
+        favBtn.addEventListener("click", () => toggleFavorite(anime));
+
+        // Player: pencarian otomatis di samehadaku
+        const safeTitle = anime.title.replace(/\s+/g, '-').toLowerCase();
+        document.getElementById("anime-player").src = `https://samehadaku.cloud/?s=${encodeURIComponent(safeTitle)}`;
+      } catch (err) {
+        console.error("Gagal memuat detail anime:", err);
+      }
+    }
+
+    // Terjemahkan sinopsis
+    const translateBtn = document.getElementById("translate-btn");
+    translateBtn.addEventListener("click", async () => {
+      const text = document.getElementById("anime-desc").textContent;
+      try {
+        const res = await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=id&dt=t&q=" + encodeURIComponent(text));
+        const data = await res.json();
+        const translated = data[0].map(t => t[0]).join(" ");
+        document.getElementById("anime-desc").textContent = translated;
+        translateBtn.disabled = true;
+        translateBtn.textContent = "✅ Sudah Diterjemahkan";
+      } catch (e) {
+        alert("Gagal menerjemahkan.");
+      }
+    });
+
+    // Theme
+    const toggle = document.getElementById("theme-toggle");
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light-mode");
+      toggle.checked = true;
+    }
+    toggle.addEventListener("change", () => {
+      document.body.classList.toggle("light-mode");
+      localStorage.setItem("theme", toggle.checked ? "light" : "dark");
+    });
+
+    window.addEventListener("DOMContentLoaded", loadAnimeDetail);
+  </script>
+</body>
+</html>
