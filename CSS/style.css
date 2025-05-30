@@ -1,0 +1,279 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #f0f0f0;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light-mode {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
+.navbar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1f1f1f;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+body.light-mode .navbar {
+  background-color: #ffffff;
+  color: #222;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #e63946;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-links li {
+  position: relative;
+}
+
+.nav-links a {
+  color: inherit;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #e63946;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  border-radius: 6px;
+  min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-menu li {
+  padding: 0.25rem 0;
+}
+
+.dropdown-menu li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Search Bar */
+.search-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  align-items: center;
+}
+
+#search-input {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  min-width: 250px;
+}
+
+#search-btn {
+  padding: 0.5rem 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#search-btn:hover {
+  background: #333;
+}
+
+body.light-mode #search-btn {
+  background: #0077cc;
+  color: white;
+}
+
+/* Theme Toggle */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #444;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  content: "🌙";
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input:checked + .slider {
+  background-color: #fca311;
+}
+
+input:checked + .slider:before {
+  content: "☀️";
+  transform: translateX(26px);
+}
+
+/* Anime Grid */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.anime-card {
+  background-color: #2d2d2d;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s;
+  position: relative;
+  text-align: center;
+}
+
+body.light-mode .anime-card {
+  background-color: #ffffff;
+  color: #222;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.anime-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
+}
+
+.anime-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.anime-card h3 {
+  padding: 0.75rem;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.anime-card a {
+  display: block;
+  margin: 0.5rem;
+  text-decoration: none;
+  color: #0077cc;
+}
+
+body.light-mode .anime-card a {
+  color: #0077cc;
+}
+
+/* Favorite Button */
+.fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s;
+}
+
+.fav-btn.favorited {
+  color: #ff4d4d;
+}
+
+.fav-btn:hover {
+  color: #ff4d4d;
+}
+
+/* Section Titles */
+h2#section-title {
+  padding: 0 2rem;
+  margin-top: 1rem;
+  font-size: 1.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #search-input {
+    width: 100%;
+  }
+}
